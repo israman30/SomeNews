@@ -9,14 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(0..<5) {
-                    Text("\($0)")
-                }
-            }
-            .navigationTitle("Some News")
-        }
+        NewsFeedView()
     }
 }
 
