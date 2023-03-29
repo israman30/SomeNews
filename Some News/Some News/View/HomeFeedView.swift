@@ -19,8 +19,12 @@ struct HomeFeedView: View {
         NavigationView {
             List {
                 ForEach(vm.articles, id: \.title) { article in
-                    CardView(article: article)
-                        .padding(.horizontal, -10)
+                    NavigationLink {
+                        ArticleDetailView(article: article)
+                    } label: {
+                        CardView(article: article)
+                            .padding(.horizontal, -10)
+                    }
                 }
             }
             .listStyle(.plain)
