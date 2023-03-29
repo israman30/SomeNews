@@ -17,6 +17,8 @@
 		4D2FF2A729D3E24D0067D372 /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2FF2A629D3E24D0067D372 /* NetworkServices.swift */; };
 		4D2FF2A929D3E2720067D372 /* ArticlesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2FF2A829D3E2720067D372 /* ArticlesViewModel.swift */; };
 		4D2FF2AB29D3E2980067D372 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2FF2AA29D3E2980067D372 /* Constants.swift */; };
+		4D2FF2AD29D47F010067D372 /* DEV-Key.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D2FF2AC29D47F010067D372 /* DEV-Key.plist */; };
+		4D2FF2AF29D47F0E0067D372 /* PROD-Key.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D2FF2AE29D47F0E0067D372 /* PROD-Key.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		4D2FF2A629D3E24D0067D372 /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
 		4D2FF2A829D3E2720067D372 /* ArticlesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticlesViewModel.swift; sourceTree = "<group>"; };
 		4D2FF2AA29D3E2980067D372 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		4D2FF2AC29D47F010067D372 /* DEV-Key.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DEV-Key.plist"; sourceTree = "<group>"; };
+		4D2FF2AE29D47F0E0067D372 /* PROD-Key.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PROD-Key.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,8 @@
 				4D2FF29029D27CF90067D372 /* ContentView.swift */,
 				4D2FF29229D27CF90067D372 /* Assets.xcassets */,
 				4D2FF29429D27CF90067D372 /* Preview Content */,
+				4D2FF2AC29D47F010067D372 /* DEV-Key.plist */,
+				4D2FF2AE29D47F0E0067D372 /* PROD-Key.plist */,
 			);
 			path = "Some News";
 			sourceTree = "<group>";
@@ -177,6 +183,8 @@
 			files = (
 				4D2FF29629D27CF90067D372 /* Preview Assets.xcassets in Resources */,
 				4D2FF29329D27CF90067D372 /* Assets.xcassets in Resources */,
+				4D2FF2AD29D47F010067D372 /* DEV-Key.plist in Resources */,
+				4D2FF2AF29D47F0E0067D372 /* PROD-Key.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
