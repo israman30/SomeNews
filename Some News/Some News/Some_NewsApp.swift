@@ -2,7 +2,7 @@
 //  Some_NewsApp.swift
 //  Some News
 //
-//  Created by Israel Manzo on 3/26/23.
+//  Created by Israel Manzo on 3/27/23.
 //
 
 import SwiftUI
