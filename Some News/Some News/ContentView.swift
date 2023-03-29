@@ -2,14 +2,14 @@
 //  ContentView.swift
 //  Some News
 //
-//  Created by Israel Manzo on 3/26/23.
+//  Created by Israel Manzo on 3/27/23.
 //
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NewsFeedView()
+        HomeFeedView()
     }
 }
 
