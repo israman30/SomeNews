@@ -11,7 +11,7 @@ struct ArticlesList: Decodable {
     let articles: [Articles]
 }
 
-struct Articles: Codable, Identifiable {
+struct Articles: Codable, Identifiable, Hashable {
     var id = UUID().uuidString
     let author: String?
     let title: String?

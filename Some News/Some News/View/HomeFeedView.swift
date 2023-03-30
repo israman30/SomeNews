@@ -10,26 +10,30 @@ import SwiftUI
 struct HomeFeedView: View {
     
     @StateObject var vm: ArticlesViewModel
+    @State private var path = NavigationPath()
     
     init() {
         self._vm = StateObject(wrappedValue: ArticlesViewModel(services: NetworkServices()))
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $path) {
             if vm.articles.isEmpty {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .blue))
             } else {
                 List {
                     ForEach(vm.articles, id: \.title) { article in
-                        NavigationLink {
-                            ArticleDetailView(article: article)
+                        Button {
+                            path.append(article)
                         } label: {
                             CardView(article: article)
                                 .padding(.horizontal, -10)
                         }
                     }
+                }
+                .navigationDestination(for: Articles.self) { article in
+                    ArticleDetailView(article: article)
                 }
                 .listStyle(.plain)
                 .navigationTitle("Some News")
