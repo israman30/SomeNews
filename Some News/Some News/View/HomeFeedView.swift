@@ -17,18 +17,24 @@ struct HomeFeedView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(vm.articles, id: \.title) { article in
-                    NavigationLink {
-                        ArticleDetailView(article: article)
-                    } label: {
-                        CardView(article: article)
-                            .padding(.horizontal, -10)
+            if vm.articles.isEmpty {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+            } else {
+                List {
+                    ForEach(vm.articles, id: \.title) { article in
+                        NavigationLink {
+                            ArticleDetailView(article: article)
+                        } label: {
+                            CardView(article: article)
+                                .padding(.horizontal, -10)
+                        }
                     }
                 }
+                .listStyle(.plain)
+                .navigationTitle("Some News")
             }
-            .listStyle(.plain)
-            .navigationTitle("Some News")
+            
         }
         .onAppear {
             self.vm.getArticles()
