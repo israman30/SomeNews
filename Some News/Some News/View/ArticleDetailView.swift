@@ -18,8 +18,6 @@ struct ArticleDetailView: View {
                     .scaledToFit()
             }
             VStack(alignment: .leading) {
-                
-                
                 Text(article.author ?? "")
                     .font(.headline)
                     .foregroundColor(.secondary)
@@ -28,7 +26,8 @@ struct ArticleDetailView: View {
                     .foregroundColor(.primary)
                     .fontWeight(.bold)
                 Text(article.description?.uppercased() ?? "")
-                    .font(.caption)
+                    .padding(.top, 2)
+                    .font(.body)
                     .foregroundColor(.secondary)
                 Spacer()
             }
