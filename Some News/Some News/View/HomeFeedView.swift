@@ -30,8 +30,8 @@ struct HomeFeedView: View {
             .listStyle(.plain)
             .navigationTitle("Some News")
         }
-        .onAppear {
-            self.vm.getArticles()
+        .task {
+            await self.vm.getArticles()
         }
     }
 }

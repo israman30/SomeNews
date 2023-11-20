@@ -13,35 +13,22 @@ enum APIError: Error {
 }
 
 protocol NetworkServicesProtocol {
-    func getArticles(completion: @escaping(Result<[Articles], APIError>?) -> Void)
+    func fetchArticles() async throws -> [Articles]
 }
 
 class NetworkServices: NetworkServicesProtocol {
     
-    func getArticles(completion: @escaping(Result<[Articles], APIError>?) -> Void) {
+    func fetchArticles() async throws -> [Articles] {
         guard let url = URL(string: Constants.endpoint) else {
-            return
+            fatalError("Wrong url")
         }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                completion(nil)
-            }
-            guard let data = data else {
-                return
-            }
-            do {
-                let articlesList = try JSONDecoder().decode(ArticlesList.self, from: data)
-                print(articlesList.articles)
-                DispatchQueue.main.async {
-                    completion(.success(articlesList.articles))
-                }
-            } catch {
-                print("Error: \(error.localizedDescription)")
-                completion(.failure(APIError.failDecodingArticles(error.localizedDescription)))
-                print(String(describing: error))
-            }
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let response = response as? HTTPURLResponse, (200...300).contains(response.statusCode) else {
+            throw APIError.errorResponse
         }
-        task.resume()
+        
+        return try JSONDecoder().decode(ArticlesList.self, from: data).articles
     }
+    
 }
