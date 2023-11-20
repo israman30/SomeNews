@@ -25,7 +25,7 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
         do {
             self.articles = try await services.fetchArticles()
         } catch {
-            print("Error gettgin data from Network layer")
+            print("DEBUG: \(APIError.errorGettingDataFromNetworkLayer(error.localizedDescription))")
         }
     }
 }
