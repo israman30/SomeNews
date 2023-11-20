@@ -13,7 +13,8 @@ protocol ArticlesViewModelProtocol: ObservableObject {
 
 @MainActor
 class ArticlesViewModel: ArticlesViewModelProtocol {
-    @Published var articles = [Articles]()
+    
+    @Published private(set) var articles = [Articles]()
     
     private let services: NetworkServicesProtocol
     
@@ -21,7 +22,7 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
         self.services = services
     }
     
-    func getArticles() async  {
+    func getArticles() async {
         do {
             self.articles = try await services.fetchArticles()
         } catch {
