@@ -9,23 +9,24 @@ import SwiftUI
 
 struct ArticleDetailView: View {
     
-    var article: Articles
+    var article: Articles?
+    var fetchedData: Article?
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: article.urlToImage ?? "")) { image in
+            AsyncImage(url: URL(string: (article != nil ? article?.urlToImage : fetchedData?.urlToImage) ?? "")) { image in
                 image.image?.resizable()
                     .scaledToFit()
             }
             VStack(alignment: .leading) {
-                Text(article.author ?? "")
+                Text((article != nil ? article?.author : fetchedData?.author) ?? "")
                     .font(.headline)
                     .foregroundColor(.secondary)
-                Text(article.title ?? "")
+                Text((article != nil ? article?.title : fetchedData?.title) ?? "")
                     .font(.title)
                     .foregroundColor(.primary)
                     .fontWeight(.bold)
-                Text(article.description?.uppercased() ?? "")
+                Text((article != nil ? article?.description?.uppercased() : fetchedData?.articleDescription?.uppercased()) ?? "")
                     .padding(.top, 2)
                     .font(.body)
                     .foregroundColor(.secondary)

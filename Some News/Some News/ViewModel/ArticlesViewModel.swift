@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import CoreData
 
 protocol ArticlesViewModelProtocol: ObservableObject {
-    func getArticles() async
+    func getArticles(context: NSManagedObjectContext) async
 }
 
 @MainActor
@@ -22,9 +23,28 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
         self.services = services
     }
     
-    func getArticles() async {
+    private func saveData(context: NSManagedObjectContext) {
+        articles.forEach { article in
+            let entity = Article(context: context)
+            entity.title = article.title
+            entity.articleDescription = article.description
+            entity.author = article.author
+            entity.publishedAt = article.publishedAt
+            entity.url = article.url
+            entity.urlToImage = article.urlToImage
+        }
+        do {
+            try context.save()
+            print("DEBUG: - Success saving data -")
+        } catch {
+            print("DEBIG: - Error saving data \(error.localizedDescription) -")
+        }
+    }
+    
+    func getArticles(context: NSManagedObjectContext) async {
         do {
             self.articles = try await services.fetchArticles()
+            self.saveData(context: context)
         } catch {
             print("DEBUG: \(APIError.errorGettingDataFromNetworkLayer(error.localizedDescription))")
         }
