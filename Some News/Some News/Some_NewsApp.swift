@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct Some_NewsApp: App {
+    
+    let persistControlle = PersistController.shared
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.managedObjectContext, persistControlle.container.viewContext)
         }
     }
 }
