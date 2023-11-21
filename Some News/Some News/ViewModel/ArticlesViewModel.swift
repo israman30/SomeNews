@@ -13,7 +13,8 @@ protocol ArticlesViewModelProtocol: ObservableObject {
 
 @MainActor
 class ArticlesViewModel: ArticlesViewModelProtocol {
-    @Published var articles = [Articles]()
+    
+    @Published private(set) var articles = [Articles]()
     
     private let services: NetworkServicesProtocol
     
@@ -21,16 +22,11 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
         self.services = services
     }
     
-    func getArticles() {
-        services.getArticles { [weak self] articlesList in
-            switch articlesList {
-            case .success(let articlesList):
-                self?.articles = articlesList
-            case .failure(let error):
-                print(String(describing:error.localizedDescription))
-            case .none:
-                break
-            }
+    func getArticles() async {
+        do {
+            self.articles = try await services.fetchArticles()
+        } catch {
+            print("DEBUG: \(APIError.errorGettingDataFromNetworkLayer(error.localizedDescription))")
         }
     }
 }
