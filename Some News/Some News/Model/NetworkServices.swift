@@ -18,7 +18,7 @@ protocol NetworkServicesProtocol {
     func fetchArticles() async throws -> [Articles]
 }
 
-class NetworkServices: NetworkServicesProtocol {
+final class NetworkServices: NetworkServicesProtocol {
     
     func fetchArticles() async throws -> [Articles] {
         guard let url = URL(string: Constants.endpoint) else {

@@ -13,10 +13,6 @@ struct PersistController {
     static var preview: PersistController = {
         let result = PersistController(inMemory: true)
         let viewContext = result.container.viewContext
-        //        for i in 0..<10 {
-        //            let newItem = Post(context: viewContext)
-        //            newItem.id = Int16(i)
-        //        }
         do {
             try viewContext.save()
         } catch {
@@ -37,9 +33,6 @@ struct PersistController {
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                
                 /*
                  Typical reasons for an error here include:
                  * The parent directory does not exist, cannot be created, or disallows writing.

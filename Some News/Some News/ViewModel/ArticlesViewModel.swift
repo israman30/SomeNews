@@ -13,7 +13,7 @@ protocol ArticlesViewModelProtocol: ObservableObject {
 }
 
 @MainActor
-class ArticlesViewModel: ArticlesViewModelProtocol {
+final class ArticlesViewModel: ArticlesViewModelProtocol {
     
     @Published private(set) var articles = [Articles]()
     
