@@ -1,0 +1,28 @@
+name: Build
+
+on:
+    workflow_dispatch:
+    push:
+        branches: [ main ]
+    pull_request: 
+        branches: [ main ]
+
+concurrency:
+    # Cancel any in-progress workflow for this workflow/branch combination
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    build:
+        name: Build and test
+        runs-on: macos-13
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Xcode version
+              uses: maxim-lobanov/setup-xcode@v1.6.0
+              with:
+                xcode-version: '15.0.1'
+            - name: Show current version of Xcode
+              run: xcodebuild -version
+            - name: Run tests
+              run: ./run_tests.sh
