@@ -17,7 +17,6 @@ struct CardView: View {
                 image.image?.resizable()
                     .scaledToFit()
             }
-                
             VStack(alignment: .leading) {
                 Text(article.author ?? "")
                     .font(.headline)
@@ -26,14 +25,10 @@ struct CardView: View {
                     .font(.title)
                     .foregroundColor(.primary)
                     .fontWeight(.bold)
-//                    .lineLimit(0)
                 Text(article.description?.uppercased() ?? "")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
-            
         }
         .cornerRadius(10)
         .overlay {

@@ -22,29 +22,7 @@ struct HomeFeedView: View {
                     NavigationLink {
                         ArticleDetailView(article: article)
                     } label: {
-//                        CardView(article: article)
-//                            .padding(.horizontal, 10)
-                        ZStack {
-                            
-                            VStack {
-                                AsyncImage(url: URL(string: article.urlToImage ?? "")) { image in
-                                    image.image?.resizable()
-                                        .scaledToFit()
-                                }
-                                VStack(alignment: .leading) {
-                                    Text(article.author ?? "")
-                                        .font(.headline)
-                                        .foregroundColor(.secondary)
-                                    Text(article.title ?? "no title")
-                                        .font(.title)
-                                        .foregroundColor(.primary)
-                                        .fontWeight(.bold)
-                                    Text(article.description?.uppercased() ?? "")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
+                        CardView(article: article)
                     }
                 }
             }
