@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeFeedView: View {
     
     @StateObject var vm: ArticlesViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     init() {
         self._vm = StateObject(wrappedValue: ArticlesViewModel(services: NetworkServices()))
@@ -18,9 +19,9 @@ struct HomeFeedView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.articles, id: \.title) { article in
-                    NavigationLink {
-                        ArticleDetailView(article: article)
+                ForEach(vm.articles, id: \.id) { article in
+                    Button {
+                        coordinator.push(.articlesDetailsView(article))
                     } label: {
                         CardView(article: article)
                     }
@@ -37,6 +38,7 @@ struct HomeFeedView: View {
 
 #Preview {
     HomeFeedView()
+        .environmentObject(Coordinator())
 }
 
 
