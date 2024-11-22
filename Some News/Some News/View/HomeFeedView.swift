@@ -19,7 +19,7 @@ struct HomeFeedView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.articles, id: \.id) { article in
+                ForEach(vm.articles) { article in
                     Button {
                         coordinator.push(.articlesDetailsView(article))
                     } label: {
