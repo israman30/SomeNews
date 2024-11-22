@@ -23,7 +23,7 @@ struct HomeFeedView: View {
                         ArticleDetailView(article: article)
                     } label: {
                         CardView(article: article)
-                            .padding(.horizontal, -10)
+                            .padding(.horizontal, 10)
                     }
                 }
             }
@@ -36,10 +36,8 @@ struct HomeFeedView: View {
     }
 }
 
-struct HomeFeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeFeedView()
-    }
+#Preview {
+    HomeFeedView()
 }
 
 
