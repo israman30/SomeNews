@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct Some_NewsApp: App {
+    
+    @StateObject private var articlesViewModel: ArticlesViewModel
+    
+    init() {
+        self._articlesViewModel = StateObject(
+            wrappedValue: ArticlesViewModel(services: NetworkServices())
+        )
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(articlesViewModel)
         }
     }
 }

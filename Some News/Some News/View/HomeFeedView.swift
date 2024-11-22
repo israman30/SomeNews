@@ -9,12 +9,8 @@ import SwiftUI
 
 struct HomeFeedView: View {
     
-    @StateObject var vm: ArticlesViewModel
+    @EnvironmentObject private var vm: ArticlesViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    
-    init() {
-        self._vm = StateObject(wrappedValue: ArticlesViewModel(services: NetworkServices()))
-    }
     
     var body: some View {
         NavigationView {
@@ -39,6 +35,7 @@ struct HomeFeedView: View {
 #Preview {
     HomeFeedView()
         .environmentObject(Coordinator())
+        .environmentObject(ArticlesViewModel(services: NetworkServices()))
 }
 
 
