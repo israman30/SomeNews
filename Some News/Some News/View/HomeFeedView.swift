@@ -9,21 +9,17 @@ import SwiftUI
 
 struct HomeFeedView: View {
     
-    @StateObject var vm: ArticlesViewModel
-    
-    init() {
-        self._vm = StateObject(wrappedValue: ArticlesViewModel(services: NetworkServices()))
-    }
+    @EnvironmentObject private var vm: ArticlesViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(vm.articles, id: \.title) { article in
-                    NavigationLink {
-                        ArticleDetailView(article: article)
+                ForEach(vm.articles) { article in
+                    Button {
+                        coordinator.push(.articlesDetailsView(article))
                     } label: {
                         CardView(article: article)
-                            .padding(.horizontal, -10)
                     }
                 }
             }
@@ -36,10 +32,10 @@ struct HomeFeedView: View {
     }
 }
 
-struct HomeFeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeFeedView()
-    }
+#Preview {
+    HomeFeedView()
+        .environmentObject(Coordinator())
+        .environmentObject(ArticlesViewModel(services: NetworkServices()))
 }
 
 
