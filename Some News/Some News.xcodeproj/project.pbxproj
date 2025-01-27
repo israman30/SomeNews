@@ -22,6 +22,7 @@
 		4D2FF2B129D4AF6E0067D372 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2FF2B029D4AF6E0067D372 /* ArticleDetailView.swift */; };
 		4D926F0F2CF01DCB0030C3C8 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D926F0E2CF01DCB0030C3C8 /* Coordinator.swift */; };
 		4D926F112CF01FC50030C3C8 /* CoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D926F102CF01FC50030C3C8 /* CoordinatorView.swift */; };
+		4DD571962D472A5C00823D30 /* Persistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD571952D472A5C00823D30 /* Persistance.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		4D2FF2B029D4AF6E0067D372 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		4D926F0E2CF01DCB0030C3C8 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		4D926F102CF01FC50030C3C8 /* CoordinatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorView.swift; sourceTree = "<group>"; };
+		4DD571952D472A5C00823D30 /* Persistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistance.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				4D2FF2A429D3E2210067D372 /* ArticlesModel.swift */,
+				4DD571952D472A5C00823D30 /* Persistance.swift */,
 				4D2FF2A629D3E24D0067D372 /* NetworkServices.swift */,
 			);
 			path = Model;
@@ -209,6 +212,7 @@
 				4D926F0F2CF01DCB0030C3C8 /* Coordinator.swift in Sources */,
 				4D2FF29F29D2802A0067D372 /* HomeFeedView.swift in Sources */,
 				4D2FF29D29D27E3C0067D372 /* CardView.swift in Sources */,
+				4DD571962D472A5C00823D30 /* Persistance.swift in Sources */,
 				4D2FF2A529D3E2210067D372 /* ArticlesModel.swift in Sources */,
 				4D2FF28F29D27CF90067D372 /* Some_NewsApp.swift in Sources */,
 				4D2FF2B129D4AF6E0067D372 /* ArticleDetailView.swift in Sources */,
