@@ -7,6 +7,10 @@
 
 import CoreData
 
+enum PersistanceError: Error {
+    case saveFailed(_ error: String)
+}
+
 struct PersistanceContainer {
     static let shared = PersistanceContainer()
     
@@ -17,7 +21,7 @@ struct PersistanceContainer {
             try viewContext.save()
         } catch {
             let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            print("Unresolved error \(nsError), \(nsError.userInfo)")
         }
         return result
     }()
@@ -42,7 +46,7 @@ struct PersistanceContainer {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Unresolved error \(error), \(error.userInfo)")
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
