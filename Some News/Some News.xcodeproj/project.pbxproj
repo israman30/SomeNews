@@ -84,10 +84,10 @@
 				4D2FF28E29D27CF90067D372 /* Some_NewsApp.swift */,
 				4D2FF29029D27CF90067D372 /* ContentView.swift */,
 				4D2FF29229D27CF90067D372 /* Assets.xcassets */,
+				4DD571972D472E3900823D30 /* Some_News.xcdatamodeld */,
 				4D2FF29429D27CF90067D372 /* Preview Content */,
 				4D2FF2AC29D47F010067D372 /* DEV-Key.plist */,
 				4D2FF2AE29D47F0E0067D372 /* PROD-Key.plist */,
-				4DD571972D472E3900823D30 /* Some_News.xcdatamodeld */,
 			);
 			path = "Some News";
 			sourceTree = "<group>";

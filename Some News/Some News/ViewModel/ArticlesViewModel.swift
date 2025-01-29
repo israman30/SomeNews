@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 protocol ArticlesViewModelProtocol: ObservableObject {
     func getArticles() async
@@ -20,6 +21,18 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
     
     init(services: NetworkServicesProtocol) {
         self.services = services
+    }
+    
+    private func saveData(context: NSManagedObjectContext) {
+        articles.forEach { article in
+            let entity = Article(context: context)
+            entity.title = article.title
+            entity.body = article.description
+            entity.urlToImage = article.urlToImage
+            entity.url = article.url
+            entity.publishedAt = article.publishedAt
+            entity.author = article.author
+        }
     }
     
     func getArticles() async {
