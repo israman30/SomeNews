@@ -11,6 +11,7 @@ import SwiftUI
 struct Some_NewsApp: App {
     
     @StateObject private var articlesViewModel: ArticlesViewModel
+    let perisitenceContainer = PersistanceContainer.shared
     
     init() {
         self._articlesViewModel = StateObject(
@@ -22,6 +23,7 @@ struct Some_NewsApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(articlesViewModel)
+                .environment(\.managedObjectContext, perisitenceContainer.container.viewContext)
         }
     }
 }
