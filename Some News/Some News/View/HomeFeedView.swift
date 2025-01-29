@@ -11,6 +11,7 @@ struct HomeFeedView: View {
     
     @EnvironmentObject private var vm: ArticlesViewModel
     @EnvironmentObject private var coordinator: Coordinator
+    @Environment(\.managedObjectContext) var context
     
     var body: some View {
         NavigationView {
@@ -27,7 +28,7 @@ struct HomeFeedView: View {
             .navigationTitle("Some News")
         }
         .task {
-            await self.vm.getArticles()
+            await self.vm.getArticles(with: context)
         }
     }
 }

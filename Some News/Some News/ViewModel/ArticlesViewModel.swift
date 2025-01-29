@@ -9,7 +9,7 @@ import SwiftUI
 import CoreData
 
 protocol ArticlesViewModelProtocol: ObservableObject {
-    func getArticles() async
+    func getArticles(with context: NSManagedObjectContext) async
 }
 
 @MainActor
@@ -35,9 +35,10 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
         }
     }
     
-    func getArticles() async {
+    func getArticles(with context: NSManagedObjectContext) async {
         do {
             self.articles = try await services.fetchArticles()
+            self.saveData(context: context)
         } catch {
             print("DEBUG: \(APIError.errorGettingDataFromNetworkLayer(error.localizedDescription))")
         }
