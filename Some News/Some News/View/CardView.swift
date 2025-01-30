@@ -9,25 +9,30 @@ import SwiftUI
 
 struct CardView: View {
     
-    var article: Articles
+    var article: Articles?
+    var fetchedData: Article?
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: article.urlToImage ?? "")) { image in
-                image.image?.resizable()
-                    .scaledToFit()
+            if let fetchedURLToImage = fetchedData?.urlToImage, let urlToImage = article?.urlToImage {
+                AsyncImage(url: URL(string: urlToImage.isEmpty ? fetchedURLToImage : urlToImage)!) { image in
+                    image.image?.resizable()
+                        .scaledToFit()
+                }
             }
             VStack(alignment: .leading) {
-                Text(article.author ?? "")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                Text(article.title ?? "no title")
-                    .font(.title)
-                    .foregroundColor(.primary)
-                    .fontWeight(.bold)
-                Text(article.description?.uppercased() ?? "")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                if let author = article?.author, let fetchedAuthor = fetchedData?.author, let title = article?.title, let fetchedTitle = fetchedData?.title, let body = article?.description, let fetchedBody = fetchedData?.body {
+                    Text(author.isEmpty ? fetchedAuthor : author)
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Text(title.isEmpty ? fetchedTitle : title)
+                        .font(.title)
+                        .foregroundColor(.primary)
+                        .fontWeight(.bold)
+                    Text(body.isEmpty ? fetchedBody : body)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .cornerRadius(10)
@@ -38,8 +43,8 @@ struct CardView: View {
     }
 }
 
-#Preview {
-    CardView(article: Articles(author: "Someone", title: "Somet Title", description: "This is the place for the description", url: "", urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918", publishedAt: "12/20/23"))
-}
+//#Preview {
+//    CardView(article: Articles(author: "Someone", title: "Somet Title", description: "This is the place for the description", url: "", urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918", publishedAt: "12/20/23"))
+//}
 
 

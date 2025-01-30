@@ -9,12 +9,12 @@ import SwiftUI
 import CoreData
 
 protocol ArticlesViewModelProtocol: ObservableObject {
-    func getArticles(with context: NSManagedObjectContext) async
+    func getArticles(with context: NSManagedObjectContext) async throws -> [Articles]
 }
 
 @MainActor
 class ArticlesViewModel: ArticlesViewModelProtocol {
-    
+        
     @Published private(set) var articles = [Articles]()
     
     private let services: NetworkServicesProtocol
@@ -33,14 +33,22 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
             entity.publishedAt = article.publishedAt
             entity.author = article.author
         }
+        
+        do {
+            try context.save()
+            print("SUCCESS: JSON Object saved in Cored Data")
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
-    func getArticles(with context: NSManagedObjectContext) async {
+    func getArticles(with context: NSManagedObjectContext) async throws -> [Articles] {
         do {
             self.articles = try await services.fetchArticles()
             self.saveData(context: context)
         } catch {
             print("DEBUG: \(APIError.errorGettingDataFromNetworkLayer(error.localizedDescription))")
         }
+        return articles
     }
 }

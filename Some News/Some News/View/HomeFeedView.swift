@@ -12,23 +12,27 @@ struct HomeFeedView: View {
     @EnvironmentObject private var vm: ArticlesViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @Environment(\.managedObjectContext) var context
+    // MARK: - Fetching data from Core Data
+    @FetchRequest(
+        entity: Article.entity(),
+        sortDescriptors: []
+    ) var results: FetchedResults<Article>
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(vm.articles) { article in
-                    Button {
-                        coordinator.push(.articlesDetailsView(article))
-                    } label: {
+            VStack {
+                if !vm.articles.isEmpty {
+                    List(results) { article in
+                        CardView(fetchedData: article)
+                    }
+                } else {
+                    List(vm.articles) { article in
                         CardView(article: article)
                     }
                 }
             }
             .listStyle(.plain)
             .navigationTitle("Some News")
-        }
-        .task {
-            await self.vm.getArticles(with: context)
         }
     }
 }
