@@ -13,20 +13,25 @@ struct CardView: View {
     
     var body: some View {
         ZStack {
-            AsyncImage(url: URL(string: article.urlToImage ?? "")) { image in
-                image.image?.resizable()
-                    .scaledToFit()
+            if let image = article.urlToImage {
+                AsyncImage(url: URL(string: image)) { image in
+                    image.image?.resizable()
+                        .scaledToFit()
+                }
+                .cornerRadius(10)
             }
-            .cornerRadius(10)
+            
             VStack {
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text(article.author ?? "")
-                        .font(.headline)
-                    Text(article.title ?? "no title")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .lineLimit(2)
+                    if let author = article.author, let title = article.title {
+                        Text(author)
+                            .font(.headline)
+                        Text(title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .lineLimit(2)
+                    }
                 }
                 .padding(.horizontal, 5)
                 .frame(maxWidth: .infinity, maxHeight: 100)
