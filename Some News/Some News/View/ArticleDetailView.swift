@@ -13,29 +13,37 @@ struct ArticleDetailView: View {
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: article.urlToImage ?? "")) { image in
-                image.image?.resizable()
-                    .scaledToFit()
+            if let image = article.urlToImage {
+                AsyncImage(url: URL(string: image)) { image in
+                    image.image?.resizable()
+                        .scaledToFit()
+                }
             }
+            
             VStack(alignment: .leading) {
-                Text(article.author ?? "")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                Text(article.title ?? "")
-                    .font(.title)
-                    .foregroundColor(.primary)
-                    .fontWeight(.bold)
-                Text(article.description?.uppercased() ?? "")
-                    .padding(.top, 2)
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                if let author = article.author, let title = article.title, let description = article.description?.uppercased() {
+                    Text(author)
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Text(title)
+                        .font(.title)
+                        .foregroundColor(.primary)
+                        .fontWeight(.bold)
+                    Text(description)
+                        .padding(.top, 2)
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
             }
             .padding()
             .cornerRadius(10)
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0), lineWidth: 1)
+                    .stroke(
+                        Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0),
+                        lineWidth: 1
+                    )
             }
 
         }

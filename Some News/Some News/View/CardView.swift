@@ -12,34 +12,51 @@ struct CardView: View {
     var article: Articles
     
     var body: some View {
-        VStack {
-            AsyncImage(url: URL(string: article.urlToImage ?? "")) { image in
-                image.image?.resizable()
-                    .scaledToFit()
+        ZStack {
+            if let image = article.urlToImage {
+                AsyncImage(url: URL(string: image)) { image in
+                    image.image?.resizable()
+                        .scaledToFit()
+                }
+                .cornerRadius(10)
             }
-            VStack(alignment: .leading) {
-                Text(article.author ?? "")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                Text(article.title ?? "no title")
-                    .font(.title)
-                    .foregroundColor(.primary)
-                    .fontWeight(.bold)
-                Text(article.description?.uppercased() ?? "")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            
+            VStack {
+                Spacer()
+                VStack(alignment: .leading) {
+                    if let author = article.author, let title = article.title {
+                        Text(author)
+                            .font(.headline)
+                        Text(title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .lineLimit(2)
+                    }
+                }
+                .padding(.horizontal, 5)
+                .frame(maxWidth: .infinity, maxHeight: 100)
+                .foregroundStyle(.white)
+                .background(
+                    LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
+                )
             }
         }
         .cornerRadius(10)
-        .overlay {
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0), lineWidth: 1)
-        }
     }
 }
 
 #Preview {
-    CardView(article: Articles(author: "Someone", title: "Somet Title", description: "This is the place for the description", url: "", urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918", publishedAt: "12/20/23"))
+    CardView(
+        article: Articles(
+            author: "Someone",
+            title: "Somet Title",
+            description: "This is the place for the description, for the body of the card where should be more text.",
+            url: "",
+            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+            publishedAt: "12/20/23"
+        )
+    )
+    .frame(height: 220)
 }
 
 
