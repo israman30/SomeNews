@@ -12,36 +12,75 @@ struct CardView: View {
     var article: Articles
     
     var body: some View {
-        ZStack {
-            if let image = article.urlToImage {
-                AsyncImage(url: URL(string: image)) { image in
-                    image.image?.resizable()
-                        .scaledToFit()
-                }
-                .cornerRadius(10)
-            }
-            
-            VStack {
-                Spacer()
-                VStack(alignment: .leading) {
-                    if let author = article.author, let title = article.title {
-                        Text(author)
-                            .font(.headline)
-                        Text(title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .lineLimit(2)
+        ZStack(alignment: .bottom) {
+            if let image = article.urlToImage, let url = URL(string: image) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            ProgressView()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipped()
+                            .transition(.opacity)
+                    case .failure:
+                        ZStack {
+                            Color.gray.opacity(0.2)
+                            Image(systemName: "photo")
+                                .font(.largeTitle)
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    @unknown default:
+                        EmptyView()
                     }
                 }
-                .padding(.horizontal, 5)
-                .frame(maxWidth: .infinity, maxHeight: 100)
-                .foregroundStyle(.white)
-                .background(
-                    LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
-                )
+                .frame(height: 220)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(radius: 4, y: 2)
+            } else {
+                ZStack {
+                    Color.gray.opacity(0.2)
+                    Image(systemName: "photo")
+                        .font(.largeTitle)
+                        .foregroundColor(.gray)
+                }
+                .frame(height: 220)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(radius: 4, y: 2)
             }
+
+            VStack(alignment: .leading, spacing: 6) {
+                if let author = article.author {
+                    Text(author)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .shadow(radius: 2)
+                }
+                if let title = article.title {
+                    Text(title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .shadow(radius: 2)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .padding([.horizontal, .bottom], 8)
         }
-        .cornerRadius(10)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .shadow(radius: 6, y: 4)
     }
 }
 
