@@ -10,172 +10,153 @@ import SwiftUI
 struct ArticleDetailView: View {
     
     var article: Articles
+    @State private var imageLoadError = false
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Enhanced Image Section
-                if let imageUrl = article.urlToImage, !imageUrl.isEmpty {
-                    AsyncImage(url: URL(string: imageUrl)) { phase in
-                        switch phase {
-                        case .empty:
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 250)
-                                .overlay(
-                                    ProgressView()
-                                        .scaleEffect(1.5)
-                                )
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: 300)
-                                .clipped()
-                        case .failure:
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(height: 250)
-                                .overlay(
-                                    VStack {
-                                        Image(systemName: "photo")
-                                            .font(.system(size: 40))
-                                            .foregroundColor(.gray)
-                                        Text("Image unavailable")
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
-                                    }
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                }
+                imageSection
                 
-                VStack(alignment: .leading, spacing: 20) {
-                    // Article Content
-                    VStack(alignment: .leading, spacing: 16) {
-                        // Title Section
-                        if let title = article.title, !title.isEmpty {
-                            Text(title)
-                                .font(.system(size: 28, weight: .bold, design: .serif))
-                                .foregroundColor(.primary)
-                                .lineLimit(nil)
-                                .multilineTextAlignment(.leading)
-                        }
-                        
-                        // Author and Date Section
-                        HStack {
-                            if let author = article.author, !author.isEmpty {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "person.circle.fill")
-                                        .foregroundColor(.blue)
-                                        .font(.system(size: 16))
-                                    Text(author)
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            
-                            Spacer()
-                            
-                            if let publishedAt = article.publishedAt, !publishedAt.isEmpty {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "calendar")
-                                        .foregroundColor(.orange)
-                                        .font(.system(size: 14))
-                                    Text(formatDate(publishedAt))
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                        
-                        // Divider
-                        Divider()
-                            .padding(.vertical, 8)
-                        
-                        // Description Section
-                        if let description = article.description, !description.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Summary")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.primary)
-                                
-                                Text(description)
-                                    .font(.system(size: 16, weight: .regular))
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(nil)
-                                    .multilineTextAlignment(.leading)
-                                    .lineSpacing(4)
-                            }
-                        }
-                        
-                        // Read More Button
-                        if let url = article.url, !url.isEmpty {
-                            Button(action: {
-                                if let url = URL(string: url) {
-                                    UIApplication.shared.open(url)
-                                }
-                            }) {
-                                HStack {
-                                    Text("Read Full Article")
-                                        .font(.system(size: 16, weight: .semibold))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "arrow.up.right")
-                                        .font(.system(size: 14, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
-                                .padding()
-                                .background(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .cornerRadius(12)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 24)
-                }
-                .background(Color(.systemBackground))
-                .cornerRadius(20, corners: [.topLeft, .topRight])
-                .offset(y: -20)
+                // Content Section
+                contentSection
             }
         }
-        .background(Color(.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    // Share functionality
-                    if let url = article.url, let shareUrl = URL(string: url) {
-                        let activityVC = UIActivityViewController(
-                            activityItems: [shareUrl],
-                            applicationActivities: nil
-                        )
-                        
-                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                           let window = windowScene.windows.first {
-                            window.rootViewController?.present(activityVC, animated: true)
-                        }
+        .background(Color(.systemBackground))
+    }
+    
+    // MARK: - Image Section
+    private var imageSection: some View {
+        ZStack {
+            if let imageUrl = article.urlToImage, !imageUrl.isEmpty {
+                AsyncImage(url: URL(string: imageUrl)) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(height: 250)
+                            .frame(maxWidth: .infinity)
+                            .background(Color(.systemGray6))
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: 300)
+                            .clipped()
+                    case .failure(_):
+                        fallbackImageView
+                    @unknown default:
+                        fallbackImageView
                     }
-                }) {
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundColor(.blue)
                 }
+            } else {
+                fallbackImageView
             }
         }
     }
     
-    // Helper function to format date
+    private var fallbackImageView: some View {
+        VStack {
+            Image(systemName: "photo")
+                .font(.system(size: 60))
+                .foregroundColor(.gray)
+            Text("No Image Available")
+                .font(.caption)
+                .foregroundColor(.gray)
+        }
+        .frame(height: 250)
+        .frame(maxWidth: .infinity)
+        .background(Color(.systemGray6))
+    }
+    
+    // MARK: - Content Section
+    private var contentSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Title
+            if let title = article.title, !title.isEmpty {
+                Text(title)
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.leading)
+            }
+            
+            // Author and Date Row
+            HStack {
+                if let author = article.author, !author.isEmpty {
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.circle.fill")
+                            .foregroundColor(.blue)
+                        Text(author)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                if let publishedAt = article.publishedAt, !publishedAt.isEmpty {
+                    HStack(spacing: 4) {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.green)
+                        Text(formatDate(publishedAt))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            
+            Divider()
+            
+            // Description
+            if let description = article.description, !description.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Summary")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    
+                    Text(description)
+                        .font(.body)
+                        .foregroundColor(.primary)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+            
+            // Source URL
+            if let url = article.url, !url.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Source")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    
+                    Link(destination: URL(string: url) ?? URL(string: "https://example.com")!) {
+                        HStack {
+                            Image(systemName: "link")
+                                .foregroundColor(.blue)
+                            Text("Read Full Article")
+                                .foregroundColor(.blue)
+                            Spacer()
+                            Image(systemName: "arrow.up.right.square")
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    }
+                }
+            }
+            
+            Spacer(minLength: 20)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
+    }
+    
+    // MARK: - Helper Methods
     private func formatDate(_ dateString: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
@@ -188,27 +169,6 @@ struct ArticleDetailView: View {
         }
         
         return dateString
-    }
-}
-
-// Extension for rounded corners
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
     }
 }
 
