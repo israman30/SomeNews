@@ -12,7 +12,8 @@ struct CardView: View {
     var article: Articles
     
     var body: some View {
-        ZStack(alignment: .bottom) {
+        VStack(alignment: .leading, spacing: 0) {
+            // Image section
             if let image = article.urlToImage, let url = URL(string: image) {
                 AsyncImage(url: url) { phase in
                     switch phase {
@@ -22,7 +23,6 @@ struct CardView: View {
                             ProgressView()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     case .success(let image):
                         image
                             .resizable()
@@ -38,14 +38,12 @@ struct CardView: View {
                                 .foregroundColor(.gray)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     @unknown default:
                         EmptyView()
                     }
                 }
-                .frame(height: 220)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .shadow(radius: 4, y: 2)
+                .frame(height: 200)
+                .clipped()
             } else {
                 ZStack {
                     Color.gray.opacity(0.2)
@@ -53,31 +51,27 @@ struct CardView: View {
                         .font(.largeTitle)
                         .foregroundColor(.gray)
                 }
-                .frame(height: 220)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .shadow(radius: 4, y: 2)
+                .frame(height: 200)
+                .clipped()
             }
-
-            VStack(alignment: .leading, spacing: 6) {
+            
+            // Text section with system colors
+            VStack(alignment: .leading, spacing: 8) {
                 if let author = article.author {
                     Text(author)
                         .font(.headline)
-                        .foregroundColor(.white)
-                        .shadow(radius: 2)
+                        .foregroundColor(.primary)
                 }
                 if let title = article.title {
                     Text(title)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                         .lineLimit(2)
-                        .shadow(radius: 2)
                 }
             }
-            .padding(12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .padding([.horizontal, .bottom], 8)
+            .padding(16)
+            .background(Color(.systemBackground))
         }
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .shadow(radius: 6, y: 4)
@@ -95,7 +89,7 @@ struct CardView: View {
             publishedAt: "12/20/23"
         )
     )
-    .frame(height: 220)
+    .frame(height: 280)
 }
 
 
