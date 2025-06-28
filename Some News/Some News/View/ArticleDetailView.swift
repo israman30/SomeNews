@@ -7,6 +7,124 @@
 
 import SwiftUI
 
+// MARK: - Article Image View Component
+struct ArticleImageView: View {
+    let imageURL: String?
+    
+    var body: some View {
+        if let image = imageURL, let url = URL(string: image) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .empty:
+                    ZStack {
+                        Color.gray.opacity(0.2)
+                        ProgressView()
+                            .accessibilityLabel("Loading article image")
+                    }
+                    .frame(minHeight: 200, maxHeight: 300)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel("Article image loading")
+                    .accessibilityAddTraits(.updatesFrequently)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(minHeight: 200, maxHeight: 300)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                        .accessibilityLabel("Article featured image")
+                        .accessibilityAddTraits(.isImage)
+                case .failure:
+                    ZStack {
+                        Color.gray.opacity(0.2)
+                        Image(systemName: "photo")
+                            .font(.system(size: 40, weight: .light))
+                            .foregroundColor(.gray)
+                            .accessibilityHidden(true)
+                    }
+                    .frame(minHeight: 200, maxHeight: 300)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel("Article image not available")
+                    .accessibilityAddTraits(.isImage)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+// MARK: - Article Body Content Component
+struct ArticleBodyView: View {
+    let article: Articles
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Author and Date Section
+            ArticleMetadataView(article: article)
+            
+            // Article Title
+            if let title = article.title {
+                Text(title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .padding(.bottom, 2)
+                    .accessibilityLabel("Article title: \(title)")
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h1)
+            }
+
+            Divider()
+                .padding(.vertical, 4)
+                .accessibilityHidden(true)
+
+            // Article Description
+            if let description = article.description {
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .lineSpacing(4)
+                    .accessibilityLabel("Article description: \(description)")
+                    .accessibilityAddTraits(.isStaticText)
+            }
+        }
+        .padding(20)
+        .padding(.horizontal)
+        .padding(.bottom, 24)
+    }
+}
+
+// MARK: - Article Metadata Component
+struct ArticleMetadataView: View {
+    let article: Articles
+    
+    var body: some View {
+        HStack {
+            if let author = article.author {
+                Label(author, systemImage: "person.fill")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .accessibilityLabel("Author: \(author)")
+                    .accessibilityAddTraits(.isStaticText)
+            }
+            Spacer()
+            if let date = article.publishedAt {
+                Label(date, systemImage: "calendar")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .accessibilityLabel("Published: \(date)")
+                    .accessibilityAddTraits(.isStaticText)
+            }
+        }
+        .padding(.bottom, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Article metadata")
+    }
+}
+
+// MARK: - Main Article Detail View
 struct ArticleDetailView: View {
     
     var article: Articles
@@ -17,100 +135,10 @@ struct ArticleDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Article Image Section
-                if let image = article.urlToImage, let url = URL(string: image) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ZStack {
-                                Color.gray.opacity(0.2)
-                                ProgressView()
-                                    .accessibilityLabel("Loading article image")
-                            }
-                            .frame(minHeight: 200, maxHeight: 300)
-                            .frame(maxWidth: .infinity)
-                            .accessibilityLabel("Article image loading")
-                            .accessibilityAddTraits(.updatesFrequently)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(minHeight: 200, maxHeight: 300)
-                                .frame(maxWidth: .infinity)
-                                .clipped()
-                                .accessibilityLabel("Article featured image")
-                                .accessibilityAddTraits(.isImage)
-                        case .failure:
-                            ZStack {
-                                Color.gray.opacity(0.2)
-                                Image(systemName: "photo")
-                                    .font(.system(size: 40, weight: .light))
-                                    .foregroundColor(.gray)
-                                    .accessibilityHidden(true)
-                            }
-                            .frame(minHeight: 200, maxHeight: 300)
-                            .frame(maxWidth: .infinity)
-                            .accessibilityLabel("Article image not available")
-                            .accessibilityAddTraits(.isImage)
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                    .padding(.bottom, 16)
-                }
-
+                ArticleImageView(imageURL: article.urlToImage)
+                
                 // Article Content Section
-                VStack(alignment: .leading, spacing: 12) {
-                    // Author and Date Section
-                    HStack {
-                        if let author = article.author {
-                            Label(author, systemImage: "person.fill")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .accessibilityLabel("Author: \(author)")
-                                .accessibilityAddTraits(.isStaticText)
-                        }
-                        Spacer()
-                        if let date = article.publishedAt {
-                            Label(date, systemImage: "calendar")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .accessibilityLabel("Published: \(date)")
-                                .accessibilityAddTraits(.isStaticText)
-                        }
-                    }
-                    .padding(.bottom, 4)
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Article metadata")
-
-                    // Article Title
-                    if let title = article.title {
-                        Text(title)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                            .padding(.bottom, 2)
-                            .accessibilityLabel("Article title: \(title)")
-                            .accessibilityAddTraits(.isHeader)
-                            .accessibilityHeading(.h1)
-                    }
-
-                    Divider()
-                        .padding(.vertical, 4)
-                        .accessibilityHidden(true)
-
-                    // Article Description
-                    if let description = article.description {
-                        Text(description)
-                            .font(.body)
-                            .foregroundColor(.primary)
-                            .lineSpacing(4)
-                            .accessibilityLabel("Article description: \(description)")
-                            .accessibilityAddTraits(.isStaticText)
-                    }
-                }
-                .padding(20)
-                .padding(.horizontal)
-                .padding(.bottom, 24)
+                ArticleBodyView(article: article)
             }
             .padding(.top)
         }
