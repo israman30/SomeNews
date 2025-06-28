@@ -28,7 +28,6 @@ struct ArticleDetailView: View {
                             }
                             .frame(minHeight: 200, maxHeight: 300)
                             .frame(maxWidth: .infinity)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
                             .accessibilityLabel("Article image loading")
                             .accessibilityAddTraits(.updatesFrequently)
                         case .success(let image):
@@ -38,7 +37,6 @@ struct ArticleDetailView: View {
                                 .frame(minHeight: 200, maxHeight: 300)
                                 .frame(maxWidth: .infinity)
                                 .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
                                 .accessibilityLabel("Article featured image")
                                 .accessibilityAddTraits(.isImage)
                         case .failure:
@@ -51,7 +49,6 @@ struct ArticleDetailView: View {
                             }
                             .frame(minHeight: 200, maxHeight: 300)
                             .frame(maxWidth: .infinity)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
                             .accessibilityLabel("Article image not available")
                             .accessibilityAddTraits(.isImage)
                         @unknown default:
