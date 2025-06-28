@@ -13,7 +13,7 @@ struct CardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Image section
+            // Image section - always full width
             if let image = article.urlToImage, let url = URL(string: image) {
                 AsyncImage(url: url) { phase in
                     switch phase {
@@ -47,7 +47,7 @@ struct CardView: View {
                         EmptyView()
                     }
                 }
-                .frame(height: 200)
+                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
                 .clipped()
             } else {
                 ZStack {
@@ -58,11 +58,11 @@ struct CardView: View {
                         .foregroundColor(.secondary)
                         .accessibilityLabel("No image available")
                 }
-                .frame(height: 200)
+                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
                 .clipped()
             }
             
-            // Text section with improved accessibility
+            // Text section with improved accessibility - always full width
             VStack(alignment: .leading, spacing: 8) {
                 if let author = article.author {
                     Text(author)
@@ -85,9 +85,11 @@ struct CardView: View {
                         .accessibilityLabel("Published: \(publishedAt)")
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
             .background(Color(.systemBackground))
         }
+        .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .shadow(radius: 6, y: 4)
         .accessibilityElement(children: .combine)
