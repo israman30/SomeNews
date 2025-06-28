@@ -10,30 +10,50 @@ import SwiftUI
 struct CardView: View {
     
     var article: Articles
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Image section - always full width
-            if let image = article.urlToImage, let url = URL(string: image) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .empty:
-                        ZStack {
-                            Color(.systemGray5)
-                                .accessibilityHidden(true)
-                            ProgressView()
-                                .accessibilityLabel("Loading article image")
+        Group {
+            if horizontalSizeClass == .regular {
+                // Landscape/Horizontal layout
+                HStack(alignment: .top, spacing: 0) {
+                    // Image section - fixed width in landscape
+                    if let image = article.urlToImage, let url = URL(string: image) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .empty:
+                                ZStack {
+                                    Color(.systemGray5)
+                                        .accessibilityHidden(true)
+                                    ProgressView()
+                                        .accessibilityLabel("Loading article image")
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .clipped()
+                                    .transition(.opacity)
+                                    .accessibilityHidden(true)
+                            case .failure:
+                                ZStack {
+                                    Color(.systemGray5)
+                                        .accessibilityHidden(true)
+                                    Image(systemName: "photo")
+                                        .font(.largeTitle)
+                                        .foregroundColor(.secondary)
+                                        .accessibilityLabel("No image available")
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            @unknown default:
+                                EmptyView()
+                            }
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .clipped()
-                            .transition(.opacity)
-                            .accessibilityHidden(true) // Hide from VoiceOver as it's decorative
-                    case .failure:
+                        .frame(width: 200, height: 150)
+                        .clipped()
+                    } else {
                         ZStack {
                             Color(.systemGray5)
                                 .accessibilityHidden(true)
@@ -42,52 +62,117 @@ struct CardView: View {
                                 .foregroundColor(.secondary)
                                 .accessibilityLabel("No image available")
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    @unknown default:
-                        EmptyView()
+                        .frame(width: 200, height: 150)
+                        .clipped()
                     }
+                    
+                    // Text section - takes remaining space
+                    VStack(alignment: .leading, spacing: 8) {
+                        if let author = article.author {
+                            Text(author)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                                .accessibilityLabel("Author: \(author)")
+                        }
+                        if let title = article.title {
+                            Text(title)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                                .lineLimit(3)
+                                .accessibilityLabel("Title: \(title)")
+                        }
+                        if let publishedAt = article.publishedAt {
+                            Text(publishedAt)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .accessibilityLabel("Published: \(publishedAt)")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+                    .background(Color(.systemBackground))
                 }
-                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                .clipped()
             } else {
-                ZStack {
-                    Color(.systemGray5)
-                        .accessibilityHidden(true)
-                    Image(systemName: "photo")
-                        .font(.largeTitle)
-                        .foregroundColor(.secondary)
-                        .accessibilityLabel("No image available")
+                // Portrait/Vertical layout (original design)
+                VStack(alignment: .leading, spacing: 0) {
+                    // Image section - always full width
+                    if let image = article.urlToImage, let url = URL(string: image) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .empty:
+                                ZStack {
+                                    Color(.systemGray5)
+                                        .accessibilityHidden(true)
+                                    ProgressView()
+                                        .accessibilityLabel("Loading article image")
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .clipped()
+                                    .transition(.opacity)
+                                    .accessibilityHidden(true)
+                            case .failure:
+                                ZStack {
+                                    Color(.systemGray5)
+                                        .accessibilityHidden(true)
+                                    Image(systemName: "photo")
+                                        .font(.largeTitle)
+                                        .foregroundColor(.secondary)
+                                        .accessibilityLabel("No image available")
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                        .clipped()
+                    } else {
+                        ZStack {
+                            Color(.systemGray5)
+                                .accessibilityHidden(true)
+                            Image(systemName: "photo")
+                                .font(.largeTitle)
+                                .foregroundColor(.secondary)
+                                .accessibilityLabel("No image available")
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
+                        .clipped()
+                    }
+                    
+                    // Text section with improved accessibility - always full width
+                    VStack(alignment: .leading, spacing: 8) {
+                        if let author = article.author {
+                            Text(author)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                                .accessibilityLabel("Author: \(author)")
+                        }
+                        if let title = article.title {
+                            Text(title)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary)
+                                .lineLimit(2)
+                                .accessibilityLabel("Title: \(title)")
+                        }
+                        if let publishedAt = article.publishedAt {
+                            Text(publishedAt)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .accessibilityLabel("Published: \(publishedAt)")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+                    .background(Color(.systemBackground))
                 }
-                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                .clipped()
             }
-            
-            // Text section with improved accessibility - always full width
-            VStack(alignment: .leading, spacing: 8) {
-                if let author = article.author {
-                    Text(author)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .accessibilityLabel("Author: \(author)")
-                }
-                if let title = article.title {
-                    Text(title)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .lineLimit(2)
-                        .accessibilityLabel("Title: \(title)")
-                }
-                if let publishedAt = article.publishedAt {
-                    Text(publishedAt)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .accessibilityLabel("Published: \(publishedAt)")
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
-            .background(Color(.systemBackground))
         }
         .frame(maxWidth: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -181,6 +266,22 @@ struct CardView: View {
         )
         .frame(width: 300, height: 280)
     }
+    .padding()
+}
+
+#Preview("Landscape Layout") {
+    CardView(
+        article: Articles(
+            author: "Business Analyst",
+            title: "Market Trends Show Strong Growth in Tech Sector",
+            description: "This is the place for the description, for the body of the card where should be more text.",
+            url: "https://example.com",
+            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+            publishedAt: "December 18, 2023"
+        )
+    )
+//    .frame(maxWidth: .infinity, height: 150)
+    .environment(\.horizontalSizeClass, .regular)
     .padding()
 }
 
