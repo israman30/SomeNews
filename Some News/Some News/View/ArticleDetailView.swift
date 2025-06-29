@@ -103,11 +103,21 @@ struct ArticleMetadataView: View {
     var body: some View {
         HStack {
             if let author = article.author {
-                Label(author, systemImage: "person.fill")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .accessibilityLabel("Author: \(author)")
-                    .accessibilityAddTraits(.isStaticText)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.fill")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Text(formatAuthors(author))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                .accessibilityLabel("Author: \(author)")
+                .accessibilityAddTraits(.isStaticText)
             }
             Spacer()
             if let date = article.publishedAt {
@@ -121,6 +131,33 @@ struct ArticleMetadataView: View {
         .padding(.bottom, 4)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Article metadata")
+    }
+    
+    // Helper function to format authors for display
+    private func formatAuthors(_ authorString: String) -> String {
+        // Split by common delimiters and clean up
+        let delimiters = [",", ";", " and ", " & "]
+        var authors = [authorString]
+        
+        for delimiter in delimiters {
+            authors = authors.flatMap { author in
+                author.components(separatedBy: delimiter)
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+            }
+        }
+        
+        // Remove duplicates and limit to reasonable number
+        let uniqueAuthors = Array(Set(authors)).prefix(5)
+        
+        if uniqueAuthors.count == 1 {
+            return uniqueAuthors.first ?? authorString
+        } else if uniqueAuthors.count <= 3 {
+            return uniqueAuthors.joined(separator: ", ")
+        } else {
+            let firstThree = Array(uniqueAuthors.prefix(3))
+            return firstThree.joined(separator: ", ") + " et al."
+        }
     }
 }
 
