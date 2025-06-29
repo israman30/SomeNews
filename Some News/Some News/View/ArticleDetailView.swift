@@ -7,51 +7,261 @@
 
 import SwiftUI
 
+// MARK: - Article Image View Component
+struct ArticleImageView: View {
+    let imageURL: String?
+    
+    var body: some View {
+        if let image = imageURL, let url = URL(string: image) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .empty:
+                    ZStack {
+                        Color.gray.opacity(0.2)
+                        ProgressView()
+                            .accessibilityLabel("Loading article image")
+                    }
+                    .frame(minHeight: 200, maxHeight: 300)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel("Article image loading")
+                    .accessibilityAddTraits(.updatesFrequently)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(minHeight: 200, maxHeight: 300)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                        .accessibilityLabel("Article featured image")
+                        .accessibilityAddTraits(.isImage)
+                case .failure:
+                    ZStack {
+                        Color.gray.opacity(0.2)
+                        Image(systemName: "photo")
+                            .font(.system(size: 40, weight: .light))
+                            .foregroundColor(.gray)
+                            .accessibilityHidden(true)
+                    }
+                    .frame(minHeight: 200, maxHeight: 300)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel("Article image not available")
+                    .accessibilityAddTraits(.isImage)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+// MARK: - Article Body Content Component
+struct ArticleBodyView: View {
+    let article: Articles
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Author and Date Section
+            ArticleMetadataView(article: article)
+            
+            // Article Title
+            if let title = article.title {
+                Text(title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .padding(.bottom, 2)
+                    .accessibilityLabel("Article title: \(title)")
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h1)
+            }
+
+            Divider()
+                .padding(.vertical, 4)
+                .accessibilityHidden(true)
+
+            // Article Description
+            if let description = article.description {
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .lineSpacing(4)
+                    .accessibilityLabel("Article description: \(description)")
+                    .accessibilityAddTraits(.isStaticText)
+            }
+        }
+        .padding(20)
+        .padding(.horizontal)
+        .padding(.bottom, 24)
+    }
+}
+
+// MARK: - Article Metadata Component
+struct ArticleMetadataView: View {
+    let article: Articles
+    
+    var body: some View {
+        HStack {
+            if let author = article.author {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "person.fill")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Text(formatAuthors(author))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                .accessibilityLabel("Author: \(author)")
+                .accessibilityAddTraits(.isStaticText)
+            }
+            Spacer()
+            if let date = article.publishedAt {
+                Label(Constants.formatDate(date), systemImage: "calendar")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .accessibilityLabel("Published: \(Constants.formatDate(date))")
+                    .accessibilityAddTraits(.isStaticText)
+            }
+        }
+        .padding(.bottom, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Article metadata")
+    }
+    
+    // Helper function to format authors for display
+    private func formatAuthors(_ authorString: String) -> String {
+        // Split by common delimiters and clean up
+        let delimiters = [",", ";", " and ", " & "]
+        var authors = [authorString]
+        
+        for delimiter in delimiters {
+            authors = authors.flatMap { author in
+                author.components(separatedBy: delimiter)
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+            }
+        }
+        
+        // Remove duplicates and limit to reasonable number
+        let uniqueAuthors = Array(Set(authors)).prefix(5)
+        
+        if uniqueAuthors.count == 1 {
+            return uniqueAuthors.first ?? authorString
+        } else if uniqueAuthors.count <= 3 {
+            return uniqueAuthors.joined(separator: ", ")
+        } else {
+            let firstThree = Array(uniqueAuthors.prefix(3))
+            return firstThree.joined(separator: ", ") + " et al."
+        }
+    }
+}
+
+// MARK: - Main Article Detail View
 struct ArticleDetailView: View {
     
     var article: Articles
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.sizeCategory) private var sizeCategory
     
     var body: some View {
-        VStack {
-            if let image = article.urlToImage {
-                AsyncImage(url: URL(string: image)) { image in
-                    image.image?.resizable()
-                        .scaledToFit()
-                }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                // Article Image Section
+                ArticleImageView(imageURL: article.urlToImage)
+                
+                // Article Content Section
+                ArticleBodyView(article: article)
             }
-            
-            VStack(alignment: .leading) {
-                if let author = article.author, let title = article.title, let description = article.description?.uppercased() {
-                    Text(author)
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                    Text(title)
-                        .font(.title)
-                        .foregroundColor(.primary)
-                        .fontWeight(.bold)
-                    Text(description)
-                        .padding(.top, 2)
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-            }
-            .padding()
-            .cornerRadius(10)
-            .overlay {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(
-                        Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 0),
-                        lineWidth: 1
-                    )
-            }
-
+            .padding(.top)
         }
-        
+        .navigationBarTitleDisplayMode(.inline)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Article detail view")
+        .accessibilityHint("Scroll to read the full article content")
+        // Dynamic Type Support
+        .environment(\.sizeCategory, sizeCategory)
+        // High Contrast Support
+        .environment(\.legibilityWeight, .regular)
+        // Reduce Motion Support
+        .animation(.easeInOut(duration: 0.3), value: colorScheme)
     }
     
+    // MARK: - Accessibility Helper Methods
+    
+    private func getAccessibleImageDescription() -> String {
+        if let title = article.title {
+            return "Featured image for article: \(title)"
+        }
+        return "Article featured image"
+    }
+    
+    private func getAccessibleContentDescription() -> String {
+        var description = ""
+        
+        if let title = article.title {
+            description += "Title: \(title). "
+        }
+        
+        if let author = article.author {
+            description += "Author: \(author). "
+        }
+        
+        if let date = article.publishedAt {
+            description += "Published: \(Constants.formatDate(date)). "
+        }
+        
+        if let desc = article.description {
+            description += "Description: \(desc)"
+        }
+        
+        return description
+    }
 }
 
+// MARK: - Preview
 #Preview {
-    ArticleDetailView(article: Articles(author: "Someone", title: "Somet Title", description: "This is the place for the description", url: "", urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918", publishedAt: "12/20/23"))
+    NavigationView {
+        ArticleDetailView(article: Articles(
+            author: "John Doe",
+            title: "Breaking News: Major Technological Advancement",
+            description: "This is a comprehensive description of the article that provides detailed information about the technological breakthrough and its implications for the future of computing and artificial intelligence.",
+            url: "https://example.com/article",
+            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+            publishedAt: "2023-12-20T10:30:00Z"
+        ))
+    }
+    .preferredColorScheme(.light)
+}
+
+#Preview("Dark Mode") {
+    NavigationView {
+        ArticleDetailView(article: Articles(
+            author: "Jane Smith",
+            title: "Environmental Impact Study Results",
+            description: "A detailed analysis of environmental changes and their long-term effects on global ecosystems.",
+            url: "https://example.com/article2",
+            urlToImage: nil,
+            publishedAt: "December 21, 2023"
+        ))
+    }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Large Text") {
+    NavigationView {
+        ArticleDetailView(article: Articles(
+            author: "Dr. Michael Johnson",
+            title: "Scientific Discovery in Quantum Physics",
+            description: "Researchers have made a groundbreaking discovery in quantum physics that could revolutionize our understanding of the universe.",
+            url: "https://example.com/article3",
+            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+            publishedAt: "December 22, 2023"
+        ))
+    }
+    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }
