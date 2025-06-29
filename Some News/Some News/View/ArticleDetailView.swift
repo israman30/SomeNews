@@ -111,10 +111,10 @@ struct ArticleMetadataView: View {
             }
             Spacer()
             if let date = article.publishedAt {
-                Label(date, systemImage: "calendar")
+                Label(Constants.formatDate(date), systemImage: "calendar")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                    .accessibilityLabel("Published: \(date)")
+                    .accessibilityLabel("Published: \(Constants.formatDate(date))")
                     .accessibilityAddTraits(.isStaticText)
             }
         }
@@ -175,7 +175,7 @@ struct ArticleDetailView: View {
         }
         
         if let date = article.publishedAt {
-            description += "Published: \(date). "
+            description += "Published: \(Constants.formatDate(date)). "
         }
         
         if let desc = article.description {
@@ -195,7 +195,7 @@ struct ArticleDetailView: View {
             description: "This is a comprehensive description of the article that provides detailed information about the technological breakthrough and its implications for the future of computing and artificial intelligence.",
             url: "https://example.com/article",
             urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "December 20, 2023"
+            publishedAt: "2023-12-20T10:30:00Z"
         ))
     }
     .preferredColorScheme(.light)

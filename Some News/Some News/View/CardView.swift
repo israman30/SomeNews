@@ -83,10 +83,10 @@ struct CardView: View {
                                 .accessibilityLabel("Title: \(title)")
                         }
                         if let publishedAt = article.publishedAt {
-                            Text(publishedAt)
+                            Text(Constants.formatDate(publishedAt))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                                .accessibilityLabel("Published: \(publishedAt)")
+                                .accessibilityLabel("Published: \(Constants.formatDate(publishedAt))")
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -162,10 +162,10 @@ struct CardView: View {
                                 .accessibilityLabel("Title: \(title)")
                         }
                         if let publishedAt = article.publishedAt {
-                            Text(publishedAt)
+                            Text(Constants.formatDate(publishedAt))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                                .accessibilityLabel("Published: \(publishedAt)")
+                                .accessibilityLabel("Published: \(Constants.formatDate(publishedAt))")
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -202,7 +202,7 @@ struct CardView: View {
         }
         
         if let publishedAt = article.publishedAt {
-            label += ". Published \(publishedAt)"
+            label += ". Published \(Constants.formatDate(publishedAt))"
         }
         
         return label.isEmpty ? "News article" : label
@@ -218,7 +218,7 @@ struct CardView: View {
             description: "This is the place for the description, for the body of the card where should be more text.",
             url: "https://example.com",
             urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "December 20, 2023"
+            publishedAt: "2023-12-20T10:30:00Z"
         )
     )
     .frame(height: 280)
@@ -233,7 +233,7 @@ struct CardView: View {
             description: "This is the place for the description, for the body of the card where should be more text.",
             url: "https://example.com",
             urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "December 20, 2023"
+            publishedAt: "2023-12-19T15:45:00Z"
         )
     )
     .frame(height: 280)
@@ -249,7 +249,7 @@ struct CardView: View {
                 description: "This is the place for the description, for the body of the card where should be more text.",
                 url: "https://example.com",
                 urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-                publishedAt: "December 20, 2023"
+                publishedAt: "2023-12-18T09:15:00Z"
             )
         )
         .frame(width: 300, height: 280)
@@ -261,7 +261,7 @@ struct CardView: View {
                 description: "This is the place for the description, for the body of the card where should be more text.",
                 url: "https://example.com",
                 urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-                publishedAt: "December 19, 2023"
+                publishedAt: "2023-12-17T14:20:00Z"
             )
         )
         .frame(width: 300, height: 280)
@@ -277,7 +277,7 @@ struct CardView: View {
             description: "This is the place for the description, for the body of the card where should be more text.",
             url: "https://example.com",
             urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "December 18, 2023"
+            publishedAt: "2023-12-16T11:30:00Z"
         )
     )
 //    .frame(maxWidth: .infinity, height: 150)
