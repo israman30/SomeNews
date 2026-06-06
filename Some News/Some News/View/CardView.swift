@@ -12,6 +12,10 @@ struct CardView: View {
     var article: Articles
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
+    private var cardShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: 14, style: .continuous)
+    }
+    
     var body: some View {
         Group {
             if horizontalSizeClass == .regular {
@@ -32,9 +36,7 @@ struct CardView: View {
                             case .success(let image):
                                 image
                                     .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .clipped()
+                                    .scaledToFill()
                                     .transition(.opacity)
                                     .accessibilityHidden(true)
                             case .failure:
@@ -52,7 +54,7 @@ struct CardView: View {
                             }
                         }
                         .frame(width: 200, height: 150)
-                        .clipped()
+                        .clipped(antialiased: true)
                     } else {
                         ZStack {
                             Color(.systemGray5)
@@ -63,11 +65,17 @@ struct CardView: View {
                                 .accessibilityLabel("No image available")
                         }
                         .frame(width: 200, height: 150)
-                        .clipped()
+                        .clipped(antialiased: true)
                     }
                     
                     // Text section - takes remaining space
                     VStack(alignment: .leading, spacing: 8) {
+                        if let sourceName = article.source?.name, !sourceName.isEmpty {
+                            Text(sourceName)
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(.secondary)
+                                .accessibilityLabel("Source: \(sourceName)")
+                        }
                         if let author = article.author {
                             Text(author)
                                 .font(.headline)
@@ -111,9 +119,7 @@ struct CardView: View {
                             case .success(let image):
                                 image
                                     .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .clipped()
+                                    .scaledToFill()
                                     .transition(.opacity)
                                     .accessibilityHidden(true)
                             case .failure:
@@ -131,7 +137,7 @@ struct CardView: View {
                             }
                         }
                         .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                        .clipped()
+                        .clipped(antialiased: true)
                     } else {
                         ZStack {
                             Color(.systemGray5)
@@ -142,11 +148,17 @@ struct CardView: View {
                                 .accessibilityLabel("No image available")
                         }
                         .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                        .clipped()
+                        .clipped(antialiased: true)
                     }
                     
                     // Text section with improved accessibility - always full width
                     VStack(alignment: .leading, spacing: 8) {
+                        if let sourceName = article.source?.name, !sourceName.isEmpty {
+                            Text(sourceName)
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(.secondary)
+                                .accessibilityLabel("Source: \(sourceName)")
+                        }
                         if let author = article.author {
                             Text(author)
                                 .font(.headline)
@@ -175,7 +187,9 @@ struct CardView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .mask(cardShape)
+        .contentShape(cardShape)
+        .compositingGroup()
         .shadow(radius: 6, y: 4)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
@@ -213,6 +227,7 @@ struct CardView: View {
 #Preview("Light Theme") {
     CardView(
         article: Articles(
+            source: Source(id: nil, name: "Reuters"),
             author: "John Doe",
             title: "Breaking News: Major Discovery in Technology",
             description: "This is the place for the description, for the body of the card where should be more text.",
@@ -228,6 +243,7 @@ struct CardView: View {
 #Preview("Dark Theme") {
     CardView(
         article: Articles(
+            source: Source(id: nil, name: "The Verge"),
             author: "Jane Smith",
             title: "Environmental Impact Study Shows Promising Results",
             description: "This is the place for the description, for the body of the card where should be more text.",
@@ -244,6 +260,7 @@ struct CardView: View {
     HStack {
         CardView(
             article: Articles(
+                source: Source(id: nil, name: "TechCrunch"),
                 author: "Tech Reporter",
                 title: "AI Breakthrough in Medical Imaging",
                 description: "This is the place for the description, for the body of the card where should be more text.",
@@ -256,6 +273,7 @@ struct CardView: View {
         
         CardView(
             article: Articles(
+                source: Source(id: nil, name: "Wired"),
                 author: "Science Writer",
                 title: "New Study Reveals Climate Change Patterns",
                 description: "This is the place for the description, for the body of the card where should be more text.",
@@ -272,6 +290,7 @@ struct CardView: View {
 #Preview("Landscape Layout") {
     CardView(
         article: Articles(
+            source: Source(id: nil, name: "Bloomberg"),
             author: "Business Analyst",
             title: "Market Trends Show Strong Growth in Tech Sector",
             description: "This is the place for the description, for the body of the card where should be more text.",

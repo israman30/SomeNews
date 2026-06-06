@@ -227,6 +227,7 @@ struct ArticleDetailView: View {
 #Preview {
     NavigationView {
         ArticleDetailView(article: Articles(
+            source: Source(id: nil, name: "Reuters"),
             author: "John Doe",
             title: "Breaking News: Major Technological Advancement",
             description: "This is a comprehensive description of the article that provides detailed information about the technological breakthrough and its implications for the future of computing and artificial intelligence.",
@@ -241,6 +242,7 @@ struct ArticleDetailView: View {
 #Preview("Dark Mode") {
     NavigationView {
         ArticleDetailView(article: Articles(
+            source: Source(id: nil, name: "The Verge"),
             author: "Jane Smith",
             title: "Environmental Impact Study Results",
             description: "A detailed analysis of environmental changes and their long-term effects on global ecosystems.",
@@ -255,6 +257,7 @@ struct ArticleDetailView: View {
 #Preview("Large Text") {
     NavigationView {
         ArticleDetailView(article: Articles(
+            source: Source(id: nil, name: "Wired"),
             author: "Dr. Michael Johnson",
             title: "Scientific Discovery in Quantum Physics",
             description: "Researchers have made a groundbreaking discovery in quantum physics that could revolutionize our understanding of the universe.",
