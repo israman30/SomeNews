@@ -55,7 +55,7 @@ struct HomeFeedView: View {
 struct EmptyMessageView: View {
     var body: some View {
         VStack(spacing: 12) {
-            Text("No articles yet.")
+            Text("Articles not found.")
                 .foregroundStyle(.secondary)
                 .padding(.top, 24)
             Text("404")
