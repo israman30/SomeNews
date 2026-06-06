@@ -12,15 +12,23 @@ enum Pages: Hashable, Equatable {
     case articlesDetailsView(_ article: Articles)
     
     static func == (lhs: Pages, rhs: Pages) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        switch (lhs, rhs) {
+        case (.homeView, .homeView):
+            return true
+        case (.articlesDetailsView(let lhsArticle), .articlesDetailsView(let rhsArticle)):
+            return lhsArticle.id == rhsArticle.id
+        default:
+            return false
+        }
     }
     
     func hash(into hasher: inout Hasher) {
         switch self {
-        case .articlesDetailsView(let ariticle):
-            hasher.combine(ariticle.id)
-        default:
-            break
+        case .homeView:
+            hasher.combine("homeView")
+        case .articlesDetailsView(let article):
+            hasher.combine("articlesDetailsView")
+            hasher.combine(article.id)
         }
     }
 }
