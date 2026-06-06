@@ -13,7 +13,9 @@ class BaseENV {
     
     init(resourceName: String) {
         guard let path = Bundle.main.path(forResource: resourceName, ofType: "plist"),
-              let plist = NSDictionary(contentsOfFile: path) else  { fatalError("Could not find file: \(resourceName).plist") }
+              let plist = NSDictionary(contentsOfFile: path) else  {
+            fatalError("Could not find file: \(resourceName).plist")
+        }
         self.dict = plist
     }
 }
@@ -54,7 +56,33 @@ var ENV: ApiKeyProtocol {
 
 
 struct Constants {
-    static let endpoint = "https://newsapi.org/v2/top-headlines?country=us&apiKey=\(ENV.API_KEY)"
+    static let topHeadlinesEndpoint = "https://newsapi.org/v2/top-headlines?country=us&apiKey=\(ENV.API_KEY)"
+    
+    static func everythingEndpoint(query: String, pageSize: Int = 50) throws -> String {
+        var components = URLComponents(string: "https://newsapi.org/v2/everything")
+        components?.queryItems = [
+            URLQueryItem(name: "q", value: query),
+            URLQueryItem(name: "language", value: "en"),
+            URLQueryItem(name: "sortBy", value: "publishedAt"),
+            URLQueryItem(name: "pageSize", value: String(max(1, min(100, pageSize)))),
+            URLQueryItem(name: "apiKey", value: ENV.API_KEY)
+        ]
+        guard let urlString = components?.url?.absoluteString else {
+            throw APIError.wrongURLAddress
+        }
+        return urlString
+    }
+    
+    static func parseAPIDate(_ dateString: String) -> Date? {
+        // NewsAPI commonly uses ISO 8601 with/without fractional seconds.
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = iso.date(from: dateString) { return date }
+        
+        let isoNoFraction = ISO8601DateFormatter()
+        isoNoFraction.formatOptions = [.withInternetDateTime]
+        return isoNoFraction.date(from: dateString)
+    }
     
     // Date formatting utility
     static func formatDate(_ dateString: String) -> String {
