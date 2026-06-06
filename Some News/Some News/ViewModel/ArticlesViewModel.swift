@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+enum LoadingState<Value> {
+    case empty
+    case loading
+    case loaded(Value)
+    case error(Error)
+}
+
 protocol ArticlesViewModelProtocol: ObservableObject {
     func getArticles() async
 }
@@ -14,7 +21,7 @@ protocol ArticlesViewModelProtocol: ObservableObject {
 @MainActor
 class ArticlesViewModel: ArticlesViewModelProtocol {
     
-    @Published private(set) var articles = [Articles]()
+    @Published private(set) var loadingState: LoadingState<[Articles]> = .empty
     
     private let services: NetworkServicesProtocol
     
@@ -23,10 +30,12 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
     }
     
     func getArticles() async {
+        loadingState = .loading
         do {
-            self.articles = try await services.fetchArticles()
+            let articles = try await services.fetchArticles()
+            loadingState = !articles.isEmpty ? .loaded(articles) : .empty
         } catch {
-            print("DEBUG: \(APIError.errorGettingDataFromNetworkLayer(error.localizedDescription))")
+            loadingState = .error(APIError.errorGettingDataFromNetworkLayer(error))
         }
     }
 }

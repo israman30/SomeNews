@@ -12,9 +12,9 @@ struct CoordinatorView: View {
     var body: some View {
         NavigationStack(path: $coordintaor.path) {
             coordintaor.build(.homeView)
-                .navigationDestination(for: Pages.self) { page in
-                    coordintaor.build(page)
-                }
+        }
+        .navigationDestination(for: Pages.self) { page in
+            coordintaor.build(page)
         }
         .environmentObject(coordintaor)
     }

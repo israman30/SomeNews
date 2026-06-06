@@ -10,7 +10,7 @@ import Foundation
 enum APIError: Error {
     case wrongURLAddress
     case errorResponse
-    case errorGettingDataFromNetworkLayer(_ message: String)
+    case errorGettingDataFromNetworkLayer(_ message: Error)
     case failDecodingArticles(_ localized: String)
 }
 
