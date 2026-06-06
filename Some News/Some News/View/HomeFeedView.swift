@@ -36,17 +36,9 @@ struct HomeFeedView: View {
                         }
                     }
                 case .error(let error):
-                    VStack(spacing: 12) {
-                        Text("Something went wrong.")
-                            .font(.headline)
-                        Text(error.localizedDescription)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button("Retry") {
-                            Task { await vm.getArticles() }
-                        }
-                    }
-                    .padding(.top, 24)
+                    ErrorMessage(error: error, retry: {
+                        Task { await vm.getArticles() }
+                    })
                 }
             }
             .padding(.horizontal, 12)
@@ -67,8 +59,29 @@ struct HomeFeedView: View {
     .environmentObject(ArticlesViewModel(services: NetworkServices()))
 }
 
-
-
+struct ErrorMessage: View {
+    let error: Error
+    var retry: () -> Void
+    
+    init(error: Error, retry: @escaping () -> Void) {
+        self.error = error
+        self.retry = retry
+    }
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("Something went wrong.")
+                .font(.headline)
+            Text(error.localizedDescription)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button("Retry") {
+                retry()
+            }
+        }
+        .padding(.top, 24)
+    }
+}
 
 
 
