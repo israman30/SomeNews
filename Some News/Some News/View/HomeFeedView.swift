@@ -17,16 +17,9 @@ struct HomeFeedView: View {
             LazyVStack {
                 switch vm.loadingState {
                 case .empty:
-                    Text("No articles yet.")
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 24)
+                    EmptyMessageView()
                 case .loading:
-                    VStack(spacing: 12) {
-                        ProgressView()
-                        Text("Loading...")
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.top, 24)
+                    LoadingView()
                 case .loaded(let articles):
                     ForEach(articles) { article in
                         Button {
@@ -57,6 +50,29 @@ struct HomeFeedView: View {
     }
     .environmentObject(Coordinator())
     .environmentObject(ArticlesViewModel(services: NetworkServices()))
+}
+
+struct EmptyMessageView: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("No articles yet.")
+                .foregroundStyle(.secondary)
+                .padding(.top, 24)
+            Text("404")
+                .font(.largeTitle)
+        }
+    }
+}
+
+struct LoadingView: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text("Loading...")
+                .foregroundStyle(.secondary)
+        }
+        .padding(.top, 24)
+    }
 }
 
 struct ErrorMessage: View {
