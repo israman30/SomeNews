@@ -12,6 +12,10 @@ struct CardView: View {
     var article: Articles
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
+    private var cardShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: 14, style: .continuous)
+    }
+    
     var body: some View {
         Group {
             if horizontalSizeClass == .regular {
@@ -32,9 +36,7 @@ struct CardView: View {
                             case .success(let image):
                                 image
                                     .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .clipped()
+                                    .scaledToFill()
                                     .transition(.opacity)
                                     .accessibilityHidden(true)
                             case .failure:
@@ -52,7 +54,7 @@ struct CardView: View {
                             }
                         }
                         .frame(width: 200, height: 150)
-                        .clipped()
+                        .clipped(antialiased: true)
                     } else {
                         ZStack {
                             Color(.systemGray5)
@@ -63,7 +65,7 @@ struct CardView: View {
                                 .accessibilityLabel("No image available")
                         }
                         .frame(width: 200, height: 150)
-                        .clipped()
+                        .clipped(antialiased: true)
                     }
                     
                     // Text section - takes remaining space
@@ -117,9 +119,7 @@ struct CardView: View {
                             case .success(let image):
                                 image
                                     .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .clipped()
+                                    .scaledToFill()
                                     .transition(.opacity)
                                     .accessibilityHidden(true)
                             case .failure:
@@ -137,7 +137,7 @@ struct CardView: View {
                             }
                         }
                         .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                        .clipped()
+                        .clipped(antialiased: true)
                     } else {
                         ZStack {
                             Color(.systemGray5)
@@ -148,7 +148,7 @@ struct CardView: View {
                                 .accessibilityLabel("No image available")
                         }
                         .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                        .clipped()
+                        .clipped(antialiased: true)
                     }
                     
                     // Text section with improved accessibility - always full width
@@ -187,7 +187,9 @@ struct CardView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .mask(cardShape)
+        .contentShape(cardShape)
+        .compositingGroup()
         .shadow(radius: 6, y: 4)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
