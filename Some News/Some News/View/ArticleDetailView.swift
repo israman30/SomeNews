@@ -11,47 +11,71 @@ import SwiftUI
 struct ArticleImageView: View {
     let imageURL: String?
     
+    private var trimmedURL: URL? {
+        guard let raw = imageURL?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else {
+            return nil
+        }
+        return url
+    }
+    
     var body: some View {
-        if let image = imageURL, let url = URL(string: image) {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .empty:
-                    ZStack {
-                        Color.gray.opacity(0.2)
-                        ProgressView()
-                            .accessibilityLabel("Loading article image")
+        let base = ZStack {
+            Color.gray.opacity(0.2)
+        }
+        Group {
+            if let url = trimmedURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        base
+                            .overlay {
+                                ProgressView()
+                                    .accessibilityLabel("Loading article image")
+                            }
+                            .accessibilityLabel("Article image loading")
+                            .accessibilityAddTraits(.updatesFrequently)
+                    case .success(let image):
+                        // Use aspect-fit to avoid cropping banners/logos.
+                        base
+                            .overlay {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            }
+                            .accessibilityLabel("Article featured image")
+                            .accessibilityAddTraits(.isImage)
+                    case .failure:
+                        base
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .font(.system(size: 40, weight: .light))
+                                    .foregroundColor(.gray)
+                                    .accessibilityHidden(true)
+                            }
+                            .accessibilityLabel("Article image not available")
+                            .accessibilityAddTraits(.isImage)
+                    @unknown default:
+                        base
                     }
-                    .frame(minHeight: 200, maxHeight: 300)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityLabel("Article image loading")
-                    .accessibilityAddTraits(.updatesFrequently)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(minHeight: 200, maxHeight: 300)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                        .accessibilityLabel("Article featured image")
-                        .accessibilityAddTraits(.isImage)
-                case .failure:
-                    ZStack {
-                        Color.gray.opacity(0.2)
+                }
+            } else {
+                base
+                    .overlay {
                         Image(systemName: "photo")
                             .font(.system(size: 40, weight: .light))
                             .foregroundColor(.gray)
                             .accessibilityHidden(true)
                     }
-                    .frame(minHeight: 200, maxHeight: 300)
-                    .frame(maxWidth: .infinity)
                     .accessibilityLabel("Article image not available")
                     .accessibilityAddTraits(.isImage)
-                @unknown default:
-                    EmptyView()
-                }
             }
-            .padding(.bottom, 16)
         }
+        .frame(minHeight: 200, maxHeight: 300)
+        .frame(maxWidth: .infinity)
+        .clipped()
+        .padding(.bottom, 16)
     }
 }
 
