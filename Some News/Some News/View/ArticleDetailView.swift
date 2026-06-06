@@ -164,7 +164,7 @@ struct ArticleMetadataView: View {
 // MARK: - Main Article Detail View
 struct ArticleDetailView: View {
     
-    var article: Articles
+    let article: Articles
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.sizeCategory) private var sizeCategory
     
