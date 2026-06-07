@@ -65,19 +65,34 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
     ]
     
     private let services: NetworkServicesProtocol
+    private let store: ArticlesStore
     
-    init(services: NetworkServicesProtocol) {
+    init(services: NetworkServicesProtocol, store: ArticlesStore = CoreDataArticlesStore()) {
         self.services = services
+        self.store = store
     }
     
     func getArticles() async {
-        loadingState = .loading
+        // Show cached content first (if available) to improve perceived performance/offline.
+        if let cached = try? await store.fetchArticles(matchedQuery: selectedCategory.query),
+           !cached.isEmpty {
+            let deduped = deduplicateByURLKeepingFirst(cached)
+            let datedSorted = deduped.sorted(by: sortByPublishedDateDesc)
+            loadingState = .loaded(datedSorted)
+        } else {
+            loadingState = .loading
+        }
+        
         do {
             let fetched = try await fetchForSelectedCategory()
             let deduped = deduplicateByURLKeepingFirst(fetched)
             let datedSorted = deduped.sorted(by: sortByPublishedDateDesc)
+            // Best effort persistence: don’t block UI updates on disk writes.
+            do { try await store.upsertArticles(datedSorted) } catch { }
             loadingState = !datedSorted.isEmpty ? .loaded(datedSorted) : .empty
         } catch {
+            // If we already have cached content on screen, keep it.
+            if case .loaded = loadingState { return }
             loadingState = .error(APIError.errorGettingDataFromNetworkLayer(error))
         }
     }

@@ -22,51 +22,7 @@ struct CardView: View {
                 // Landscape/Horizontal layout
                 HStack(alignment: .top, spacing: 0) {
                     // Image section - fixed width in landscape
-                    if let image = article.urlToImage, let url = URL(string: image) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .empty:
-                                ZStack {
-                                    Color(.systemGray5)
-                                        .accessibilityHidden(true)
-                                    ProgressView()
-                                        .accessibilityLabel("Loading article image")
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .transition(.opacity)
-                                    .accessibilityHidden(true)
-                            case .failure:
-                                ZStack {
-                                    Color(.systemGray5)
-                                        .accessibilityHidden(true)
-                                    Image(systemName: "photo")
-                                        .font(.largeTitle)
-                                        .foregroundColor(.secondary)
-                                        .accessibilityLabel("No image available")
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            @unknown default:
-                                EmptyView()
-                            }
-                        }
-                        .frame(width: 200, height: 150)
-                        .clipped(antialiased: true)
-                    } else {
-                        ZStack {
-                            Color(.systemGray5)
-                                .accessibilityHidden(true)
-                            Image(systemName: "photo")
-                                .font(.largeTitle)
-                                .foregroundColor(.secondary)
-                                .accessibilityLabel("No image available")
-                        }
-                        .frame(width: 200, height: 150)
-                        .clipped(antialiased: true)
-                    }
+                    articleImage(width: 200, height: 150)
                     
                     // Text section - takes remaining space
                     VStack(alignment: .leading, spacing: 8) {
@@ -105,51 +61,7 @@ struct CardView: View {
                 // Portrait/Vertical layout (original design)
                 VStack(alignment: .leading, spacing: 0) {
                     // Image section - always full width
-                    if let image = article.urlToImage, let url = URL(string: image) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .empty:
-                                ZStack {
-                                    Color(.systemGray5)
-                                        .accessibilityHidden(true)
-                                    ProgressView()
-                                        .accessibilityLabel("Loading article image")
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .transition(.opacity)
-                                    .accessibilityHidden(true)
-                            case .failure:
-                                ZStack {
-                                    Color(.systemGray5)
-                                        .accessibilityHidden(true)
-                                    Image(systemName: "photo")
-                                        .font(.largeTitle)
-                                        .foregroundColor(.secondary)
-                                        .accessibilityLabel("No image available")
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            @unknown default:
-                                EmptyView()
-                            }
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                        .clipped(antialiased: true)
-                    } else {
-                        ZStack {
-                            Color(.systemGray5)
-                                .accessibilityHidden(true)
-                            Image(systemName: "photo")
-                                .font(.largeTitle)
-                                .foregroundColor(.secondary)
-                                .accessibilityLabel("No image available")
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200)
-                        .clipped(antialiased: true)
-                    }
+                    articleImage(height: 200)
                     
                     // Text section with improved accessibility - always full width
                     VStack(alignment: .leading, spacing: 8) {
@@ -220,6 +132,67 @@ struct CardView: View {
         }
         
         return label.isEmpty ? "News article" : label
+    }
+    
+    private var articleImageURL: URL? {
+        guard let raw = article.urlToImage?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else {
+            return nil
+        }
+        return url
+    }
+    
+    @ViewBuilder
+    private func articleImage(width: CGFloat? = nil, height: CGFloat) -> some View {
+        let base = ZStack {
+            Color(.systemGray5).accessibilityHidden(true)
+        }
+        
+        Group {
+            if let url = articleImageURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        base
+                            .overlay {
+                                ProgressView()
+                                    .accessibilityLabel("Loading article image")
+                            }
+                    case .success(let image):
+                        // Use aspect-fit to avoid cropping key parts of the image (common for banners/logos).
+                        base
+                            .overlay {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .transition(.opacity)
+                                    .accessibilityHidden(true)
+                            }
+                    case .failure:
+                        base
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.secondary)
+                                    .accessibilityLabel("No image available")
+                            }
+                    @unknown default:
+                        base
+                    }
+                }
+            } else {
+                base
+                    .overlay {
+                        Image(systemName: "photo")
+                            .font(.largeTitle)
+                            .foregroundColor(.secondary)
+                            .accessibilityLabel("No image available")
+                    }
+            }
+        }
+        .frame(width: width, height: height)
+        .clipped(antialiased: true)
     }
 }
 
