@@ -197,84 +197,86 @@ struct CardView: View {
 }
 
 // MARK: - Preview with different configurations
-#Preview("Light Theme") {
-    CardView(
-        article: Articles(
-            source: Source(id: nil, name: "Reuters"),
-            author: "John Doe",
-            title: "Breaking News: Major Discovery in Technology",
-            description: "This is the place for the description, for the body of the card where should be more text.",
-            url: "https://example.com",
-            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "2023-12-20T10:30:00Z"
-        )
-    )
-    .frame(height: 280)
-    .preferredColorScheme(.light)
-}
-
-#Preview("Dark Theme") {
-    CardView(
-        article: Articles(
-            source: Source(id: nil, name: "The Verge"),
-            author: "Jane Smith",
-            title: "Environmental Impact Study Shows Promising Results",
-            description: "This is the place for the description, for the body of the card where should be more text.",
-            url: "https://example.com",
-            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "2023-12-19T15:45:00Z"
-        )
-    )
-    .frame(height: 280)
-    .preferredColorScheme(.dark)
-}
-
-#Preview("Landscape") {
-    HStack {
-        CardView(
-            article: Articles(
-                source: Source(id: nil, name: "TechCrunch"),
-                author: "Tech Reporter",
-                title: "AI Breakthrough in Medical Imaging",
-                description: "This is the place for the description, for the body of the card where should be more text.",
-                url: "https://example.com",
-                urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-                publishedAt: "2023-12-18T09:15:00Z"
+struct CardView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            CardView(
+                article: Articles(
+                    source: Source(id: nil, name: "Reuters"),
+                    author: "John Doe",
+                    title: "Breaking News: Major Discovery in Technology",
+                    description: "This is the place for the description, for the body of the card where should be more text.",
+                    url: "https://example.com",
+                    urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                    publishedAt: "2023-12-20T10:30:00Z"
+                )
             )
-        )
-        .frame(width: 300, height: 280)
-        
-        CardView(
-            article: Articles(
-                source: Source(id: nil, name: "Wired"),
-                author: "Science Writer",
-                title: "New Study Reveals Climate Change Patterns",
-                description: "This is the place for the description, for the body of the card where should be more text.",
-                url: "https://example.com",
-                urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-                publishedAt: "2023-12-17T14:20:00Z"
+            .frame(height: 280)
+            .preferredColorScheme(.light)
+            .previewDisplayName("Light Theme")
+            
+            CardView(
+                article: Articles(
+                    source: Source(id: nil, name: "The Verge"),
+                    author: "Jane Smith",
+                    title: "Environmental Impact Study Shows Promising Results",
+                    description: "This is the place for the description, for the body of the card where should be more text.",
+                    url: "https://example.com",
+                    urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                    publishedAt: "2023-12-19T15:45:00Z"
+                )
             )
-        )
-        .frame(width: 300, height: 280)
+            .frame(height: 280)
+            .preferredColorScheme(.dark)
+            .previewDisplayName("Dark Theme")
+            
+            HStack {
+                CardView(
+                    article: Articles(
+                        source: Source(id: nil, name: "TechCrunch"),
+                        author: "Tech Reporter",
+                        title: "AI Breakthrough in Medical Imaging",
+                        description: "This is the place for the description, for the body of the card where should be more text.",
+                        url: "https://example.com",
+                        urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                        publishedAt: "2023-12-18T09:15:00Z"
+                    )
+                )
+                .frame(width: 300, height: 280)
+                
+                CardView(
+                    article: Articles(
+                        source: Source(id: nil, name: "Wired"),
+                        author: "Science Writer",
+                        title: "New Study Reveals Climate Change Patterns",
+                        description: "This is the place for the description, for the body of the card where should be more text.",
+                        url: "https://example.com",
+                        urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                        publishedAt: "2023-12-17T14:20:00Z"
+                    )
+                )
+                .frame(width: 300, height: 280)
+            }
+            .padding()
+            .previewDisplayName("Landscape")
+            
+            CardView(
+                article: Articles(
+                    source: Source(id: nil, name: "Bloomberg"),
+                    author: "Business Analyst",
+                    title: "Market Trends Show Strong Growth in Tech Sector",
+                    description: "This is the place for the description, for the body of the card where should be more text.",
+                    url: "https://example.com",
+                    urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                    publishedAt: "2023-12-16T11:30:00Z"
+                )
+            )
+            // .frame(maxWidth: .infinity, height: 150)
+            .environment(\.horizontalSizeClass, .regular)
+            .padding()
+            .previewDisplayName("Landscape Layout")
+        }
     }
-    .padding()
-}
-
-#Preview("Landscape Layout") {
-    CardView(
-        article: Articles(
-            source: Source(id: nil, name: "Bloomberg"),
-            author: "Business Analyst",
-            title: "Market Trends Show Strong Growth in Tech Sector",
-            description: "This is the place for the description, for the body of the card where should be more text.",
-            url: "https://example.com",
-            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "2023-12-16T11:30:00Z"
-        )
-    )
-//    .frame(maxWidth: .infinity, height: 150)
-    .environment(\.horizontalSizeClass, .regular)
-    .padding()
 }
 
 

@@ -99,9 +99,12 @@ class ArticlesViewModel: ArticlesViewModelProtocol {
     
     func groupedBySource(_ articles: [Articles]) -> [(source: String, articles: [Articles])] {
         let groups = Dictionary(grouping: articles) { article in
-            article.source?.name?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-            ? (article.source?.name ?? "Unknown Source")
-            : "Unknown Source"
+            let trimmed = article.source?.name?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if let trimmed, !trimmed.isEmpty {
+                return trimmed
+            }
+            return "Unknown Source"
         }
         
         let sortedSources = groups.keys.sorted { lhs, rhs in

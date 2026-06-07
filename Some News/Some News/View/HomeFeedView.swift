@@ -124,12 +124,14 @@ struct HomeFeedView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        HomeFeedView()
+struct HomeFeedView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            HomeFeedView()
+        }
+        .environmentObject(Coordinator())
+        .environmentObject(ArticlesViewModel(services: NetworkServices()))
     }
-    .environmentObject(Coordinator())
-    .environmentObject(ArticlesViewModel(services: NetworkServices()))
 }
 
 struct EmptyMessageView: View {

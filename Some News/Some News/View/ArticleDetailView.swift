@@ -248,47 +248,50 @@ struct ArticleDetailView: View {
 }
 
 // MARK: - Preview
-#Preview {
-    NavigationView {
-        ArticleDetailView(article: Articles(
-            source: Source(id: nil, name: "Reuters"),
-            author: "John Doe",
-            title: "Breaking News: Major Technological Advancement",
-            description: "This is a comprehensive description of the article that provides detailed information about the technological breakthrough and its implications for the future of computing and artificial intelligence.",
-            url: "https://example.com/article",
-            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "2023-12-20T10:30:00Z"
-        ))
+struct ArticleDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            NavigationView {
+                ArticleDetailView(article: Articles(
+                    source: Source(id: nil, name: "Reuters"),
+                    author: "John Doe",
+                    title: "Breaking News: Major Technological Advancement",
+                    description: "This is a comprehensive description of the article that provides detailed information about the technological breakthrough and its implications for the future of computing and artificial intelligence.",
+                    url: "https://example.com/article",
+                    urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                    publishedAt: "2023-12-20T10:30:00Z"
+                ))
+            }
+            .preferredColorScheme(.light)
+            .previewDisplayName("Light")
+            
+            NavigationView {
+                ArticleDetailView(article: Articles(
+                    source: Source(id: nil, name: "The Verge"),
+                    author: "Jane Smith",
+                    title: "Environmental Impact Study Results",
+                    description: "A detailed analysis of environmental changes and their long-term effects on global ecosystems.",
+                    url: "https://example.com/article2",
+                    urlToImage: nil,
+                    publishedAt: "December 21, 2023"
+                ))
+            }
+            .preferredColorScheme(.dark)
+            .previewDisplayName("Dark Mode")
+            
+            NavigationView {
+                ArticleDetailView(article: Articles(
+                    source: Source(id: nil, name: "Wired"),
+                    author: "Dr. Michael Johnson",
+                    title: "Scientific Discovery in Quantum Physics",
+                    description: "Researchers have made a groundbreaking discovery in quantum physics that could revolutionize our understanding of the universe.",
+                    url: "https://example.com/article3",
+                    urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
+                    publishedAt: "December 22, 2023"
+                ))
+            }
+            .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+            .previewDisplayName("Large Text")
+        }
     }
-    .preferredColorScheme(.light)
-}
-
-#Preview("Dark Mode") {
-    NavigationView {
-        ArticleDetailView(article: Articles(
-            source: Source(id: nil, name: "The Verge"),
-            author: "Jane Smith",
-            title: "Environmental Impact Study Results",
-            description: "A detailed analysis of environmental changes and their long-term effects on global ecosystems.",
-            url: "https://example.com/article2",
-            urlToImage: nil,
-            publishedAt: "December 21, 2023"
-        ))
-    }
-    .preferredColorScheme(.dark)
-}
-
-#Preview("Large Text") {
-    NavigationView {
-        ArticleDetailView(article: Articles(
-            source: Source(id: nil, name: "Wired"),
-            author: "Dr. Michael Johnson",
-            title: "Scientific Discovery in Quantum Physics",
-            description: "Researchers have made a groundbreaking discovery in quantum physics that could revolutionize our understanding of the universe.",
-            url: "https://example.com/article3",
-            urlToImage: "https://www.kbb.com/wp-content/uploads/2022/08/2022-mercedes-amg-eqs-front-left-3qtr.jpg?w=918",
-            publishedAt: "December 22, 2023"
-        ))
-    }
-    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }
