@@ -24,4 +24,15 @@ jobs:
                 xcode-version: '15.0.1'
             - name: Show current version of Xcode
               run: xcodebuild -version
-        
+            - name: Build (iOS Simulator)
+              run: |
+                set -euo pipefail
+                xcodebuild \
+                  -project "Some News/Some News.xcodeproj" \
+                  -scheme "Some News" \
+                  -configuration Debug \
+                  -sdk iphonesimulator \
+                  -destination 'generic/platform=iOS Simulator' \
+                  -derivedDataPath "./DerivedData" \
+                  CODE_SIGNING_ALLOWED=NO \
+                  clean build
